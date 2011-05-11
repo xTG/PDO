@@ -1,16 +1,16 @@
-PDO
+ï»¿PDO
 ===
 
 Il m'est venu de travailler pour la version de PHP 5.0.5 et donc de ne pas disposer de PDO.
-J'aurai pu n'utiliser que l'extension mysqli de base mais pensant à la mise à jour dans le courant de l'année
-ou de l'année suivante du dit serveur il aurait été plus intéressant de penser à un code pour PHP 5.3 et
-de fournir une compatibilité descendante de l'application. J'en suis donc venu à développer une série de class
-émulant le comportement de PDO.
+J'aurai pu n'utiliser que l'extension mysqli de base mais pensant Ã  la mise Ã  jour dans le courant de l'annÃ©e
+ou de l'annÃ©e suivante du dit serveur il aurait Ã©tÃ© plus intÃ©ressant de penser Ã  un code pour PHP 5.3 et
+de fournir une compatibilitÃ© descendante de l'application. J'en suis donc venu Ã  dÃ©velopper une sÃ©rie de class
+Ã©mulant le comportement de PDO.
 
-Toutes les fonctions ne sont pas présentes (__les transactions ne sont pas disponibles__), certaines ne se comportent peut être pas non plus véritablement
+Toutes les fonctions ne sont pas prÃ©sentes (__les transactions ne sont pas disponibles__), certaines ne se comportent peut Ãªtre pas non plus vÃ©ritablement
 comme celles de PDO mais le fonctionnement global reste selon moi correct.
 
-Actuellement seuls les drivers suivant sont implémentés :
- - MySQL (sélection automatique de MySQLi si l'extension est présente)
+Actuellement seuls les drivers suivant sont implÃ©mentÃ©s :
+ - MySQL (sÃ©lection automatique de MySQLi si l'extension est prÃ©sente)
  - MySQLi
- - PostgreSQL (__/!\non testé__)
+ - PostgreSQL (__/!\non testÃ©__)
