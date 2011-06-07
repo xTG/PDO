@@ -2,10 +2,11 @@
 /*
 * Class émulant l'extension PDO - PDOStatement
 * @author Baptiste ROUSSEL
-* @version 1.1
+* @version 1.2
 * @changelog
 * 		1.0 Driver MySQL et MySQLi
 *		1.1 Driver PostgreSQL
+*		1.2 Gestion des paramètres :nom dans execute()
 *
 * The PDO class is free software.
 * It is released under the terms of the following BSD License.
@@ -211,6 +212,7 @@ class PDOStatement implements Iterator {
 		$query = $this->queryString;
 		// On vide le jeu de données
 		$this->result = array();
+		$this->position = 0;
 		
 		// Gestion des paramètres provenant de bindParam()
 		if( !empty($this->params) )
@@ -228,39 +230,55 @@ class PDOStatement implements Iterator {
 		// Vérification des paramètres
 		if( $input_parameters != null )
 		{
+			$query = str_replace('?',"[%_?_%]",$query);
 			switch($this->driver)
 			{
 				case 'mysql' : // bind manuel
 					foreach($input_parameters as $param => $val)
 					{
-						$val = @mysql_real_escape_string($val,$this->connexion);
+						if( $val !== null )
+							$val = "'".@mysql_real_escape_string($val,$this->connexion)."'";
+						else
+							$val = "NULL";
+						if( !is_int($param) )
+							$param = ":$param";
 						if( $param[0] != ':' )
-							$param = '?';
+							$param = '[%_?_%]';
 						$position = strpos($query,$param);
 						if( $position != 0 )
-							$query = substr_replace($query,"'$val'",$position,strlen($param));
+							$query = substr_replace($query,$val,$position,strlen($param));
 					}
 				break;
 				case 'mysqli' : // bind manuel
 					foreach($input_parameters as $param => $val)
 					{
-						$val = @$this->connexion->real_escape_string($val);
+						if( $val !== null )
+							$val = "'".@$this->connexion->real_escape_string($val)."'";
+						else
+							$val = "NULL";
+						if( !is_int($param) )
+							$param = ":$param";
 						if( $param[0] != ':' )
-							$param = '?';
+							$param = '[%_?_%]';
 						$position = strpos($query,$param);
 						if( $position != 0 )
-							$query = substr_replace($query,"'$val'",$position,strlen($param));
+							$query = substr_replace($query,$val,$position,strlen($param));
 					}
 				break;
 				case 'postgresql' :
 					foreach($input_parameters as $param => $val)
 					{
-						$val = @pg_escape_string($this->connexion,$val);
+						if( $val !== null )
+							$val = "'".@pg_escape_string($this->connexion,$val)."'";
+						else
+							$val = "NULL";
+						if( !is_int($param) )
+							$param = ":$param";
 						if( $param[0] != ':' )
-							$param = '?';
+							$param = '[%_?_%]';
 						$position = strpos($query,$param);
 						if( $position != 0 )
-							$query = substr_replace($query,"'$val'",$position,strlen($param));
+							$query = substr_replace($query,$val,$position,strlen($param));
 					}
 				break;
 				default : // Driver inconnu => comment a-t-on pu arriver jusque là ?
@@ -268,7 +286,7 @@ class PDOStatement implements Iterator {
 				break;
 			}
 		}
-		
+		echo "<hr />$query<hr />";
 		// Vérification de la connexion
 		if( $this->connexion == null )
 		{
