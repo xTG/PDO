@@ -286,7 +286,7 @@ class PDOStatement implements Iterator {
 				break;
 			}
 		}
-		echo "<hr />$query<hr />";
+		
 		// Vérification de la connexion
 		if( $this->connexion == null )
 		{
